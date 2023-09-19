@@ -42,7 +42,7 @@ async function createCard(key, json, container)
   const contentInElement = document.createElement("div");
   contentInElement.className = "content";
   const numberOfPages = document.createElement("p");
-  numberOfPages.textContent = `count: ${jsonNew[`count`]}`;
+  numberOfPages.textContent = `pages: ${jsonNew[`count`]}`;
   numberOfPages.className = "count";
   const hyperLink = document.createElement("a");
   hyperLink.textContent = `${key[0].toUpperCase() + key.substring(1)}`;
