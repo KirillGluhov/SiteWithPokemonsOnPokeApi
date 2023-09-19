@@ -1,0 +1,39 @@
+.card
+{
+    display: flex;
+    width: 200px;
+    height: 200px;
+    box-shadow: 5px 5px 5px black;
+    margin: 20px;
+    border: 10px solid yellow;
+    
+}
+
+.content
+{
+    position: relative;
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 100%;
+
+}
+
+.count
+{
+    font-family: 'Arial Black', Gadget, sans-serif;
+    color: red;
+    bottom: 0px;
+    text-align: center;
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+}
+
+a
+{
+    font-family: 'Arial Black', Gadget, sans-serif;
+    text-decoration: none;
+    text-align: center;
+}
