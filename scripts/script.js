@@ -45,8 +45,13 @@ async function createCard(key, json, container)
   numberOfPages.textContent = `pages: ${jsonNew[`count`]}`;
   numberOfPages.className = "count";
   const hyperLink = document.createElement("a");
-  hyperLink.textContent = `${key[0].toUpperCase() + key.substring(1)}`;
+  hyperLink.textContent = `${key[0].toUpperCase() + key.substring(1).replace(/-/g, " ")}`;
   hyperLink.href = `${json[key]}`;
+  // hyperLink.addEventListener("click", function(event){
+  //   const xhr = new XMLHttpRequest();
+  //   xhr.open("GET", `C:\Users\valer\OneDrive\Рабочий стол\Petproject\SitePokemonBackend\index.php?site=${json[key].substring(26)}`);
+  //   xhr.send();
+  // })
   contentInElement.appendChild(hyperLink);
   contentInElement.appendChild(numberOfPages);
   divElement.appendChild(contentInElement);
