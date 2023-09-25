@@ -1,6 +1,8 @@
 const NUMBER_OF_POKEMONS = 1017;
 
 let listOfPokemons = [];
+let listOfAllInfoAboutPokemons = [];
+let listAdditionalAboutPokemon = []
 
 async function makeSlider()
 {
@@ -14,12 +16,14 @@ async function makeSlider()
   crossElement.style.height = '5em';
   const divPokemon = document.createElement("div");
   divPokemon.id = "#h";
+  divPokemon.className = "slider";
 
   crossElement.addEventListener("click", function() {
 
     if (infoAboutThePokemon.style.right === '0%')
     {
       infoAboutThePokemon.style.right = '-30%';
+      divPokemon.innerHTML = "";
     }
   });
 
@@ -42,35 +46,110 @@ async function getInfoAboutPokemon()
 
   for (let i = 0; i < NUMBER_OF_POKEMONS; i++)
   {
+    listOfAllInfoAboutPokemons[i] = await sendGetResponse(`https://pokeapi.co/api/v2/pokemon/${i+1}/`);
+    listAdditionalAboutPokemon[i] = await sendGetResponse(`https://pokeapi.co/api/v2/pokemon-species/${i+1}/`);
+
     listOfPokemons[i] = {
       name: data['results'][i]['name'],
       url: data['results'][i]['url'],
       number: i+1,
-      image: await getImageOfPokemon(`https://pokeapi.co/api/v2/pokemon/${i+1}/`),
-      types: await getTypeOfThisPokemon(`https://pokeapi.co/api/v2/pokemon/${i+1}/`)
+      image: listOfAllInfoAboutPokemons[i]['sprites']['front_default'],
+      types: getTypeOfThisPokemon(listOfAllInfoAboutPokemons[i]),
+      color: listAdditionalAboutPokemon[i]['color']['name'],
+      generation: listAdditionalAboutPokemon[i]['generation']['name']
     }
   }
+
+  
 
   return listOfPokemons;
 }
 
-async function getImageOfPokemon(siteOfPokemon)
+function getTypeOfThisPokemon(pokemon)
 {
-  const data = await sendGetResponse(siteOfPokemon);
-  return data['sprites']['front_default'];
-}
-
-async function getTypeOfThisPokemon(siteOfPokemon)
-{
-  const data = await sendGetResponse(siteOfPokemon);
   let typesOfPokemon = [];
 
-  for (let i = 0; i < data['types'].length; i++)
+  for (let i = 0; i < pokemon['types'].length; i++)
   {
-    typesOfPokemon.push(data['types'][i]['type']['name']);
+    typesOfPokemon.push(pokemon['types'][i]['type']['name']);
   }
 
   return typesOfPokemon;
+}
+
+async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
+{
+  const listOfValues = document.createElement("div");
+  const imagesValues = document.createElement("img");
+  const nameAndGeneration = document.createElement("div");
+  const characters = document.createElement("div");
+
+  const nameOfPokemon = document.createElement("div");
+  const generationOfPokemon = document.createElement("div");
+
+  const experience = document.createElement("div");
+  const heightOfPokemon = document.createElement("div");
+  const weightOfPokemon = document.createElement("div");
+
+  experience.className = 'name red';
+  heightOfPokemon.className = 'name green';
+  weightOfPokemon.className = 'name blue';
+
+  experience.textContent = `base exp: ${pokemon['base_experience']}`;
+  heightOfPokemon.textContent = `height: ${pokemon['height']}`;
+  weightOfPokemon.textContent = `weight: ${pokemon['weight']}`;
+
+
+  nameAndGeneration.className = "block";
+  characters.className = "block";
+
+  nameOfPokemon.textContent = `${pokemon['name'][0].toUpperCase() + pokemon['name'].slice(1)}`;
+  nameOfPokemon.className = `name ${pokemonAdditional['color']}`;
+
+  generationOfPokemon.textContent = `${pokemonAdditional['generation'].slice(11).toUpperCase()}`
+  generationOfPokemon.className = `name generation`;
+
+  let abilities = [];
+  let moves = [];
+  let stats = [];
+
+  for (let i = 0; i < pokemon['abilities'].length; i++)
+  {
+    abilities.push(pokemon['abilities'][i]['ability']['name']);
+  }
+
+  for (let i = 0; i < pokemon['moves'].length; i++)
+  {
+    moves.push(pokemon['moves'][i]['move']['name']);
+  }
+
+  for (let i = 0; i < pokemon['stats'].length; i++)
+  {
+    let statAndBaseStat = [];
+    statAndBaseStat.push(pokemon['stats'][i]['stat']['name']);
+    statAndBaseStat.push(pokemon['stats'][i]['base_stat']);
+
+    stats.push(statAndBaseStat);
+  }
+
+  listOfValues.textContent = `abilities: ${abilities.join(", ")}, moves: ${moves.join(", ")}, stats: ${stats.map(function(item) {return item.join(" ");}).join(", ")}`
+
+  imagesValues.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon['id']}.png`;
+  imagesValues.className = 'imageWithShape';
+
+
+  nameAndGeneration.appendChild(nameOfPokemon);
+  nameAndGeneration.appendChild(generationOfPokemon);
+
+  characters.appendChild(experience);
+  characters.appendChild(heightOfPokemon);
+  characters.appendChild(weightOfPokemon);
+
+  mainElement.appendChild(nameAndGeneration);
+  mainElement.appendChild(imagesValues);
+  mainElement.appendChild(characters);
+  mainElement.appendChild(listOfValues);
+
 }
 
 async function createCards()
@@ -122,7 +201,9 @@ async function createCards()
       {
         infoAboutThePokemon.style.right = '0%'
         
-        divPokemon.textContent = `${pokemons[i]['name'][0].toUpperCase() + pokemons[i]['name'].slice(1).replace(/-/g, " ")}`;
+        //divPokemon.textContent = `${pokemons[i]['name'][0].toUpperCase() + pokemons[i]['name'].slice(1).replace(/-/g, " ")}`;
+        //divPokemon.appendChild(createInfoInSlider(pokemons[i]));
+        createInfoInSlider(listOfAllInfoAboutPokemons[i], divPokemon, pokemons[i]);
       }
     });
 
