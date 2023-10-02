@@ -1,8 +1,10 @@
-const NUMBER_OF_POKEMONS = 1017;
+const NUMBER_OF_POKEMONS = 1017; //1017
 
 let listOfPokemons = [];
 let listOfAllInfoAboutPokemons = [];
-let listAdditionalAboutPokemon = []
+let listAdditionalAboutPokemon = [];
+
+const search = document.getElementById("qg");
 
 async function makeSlider()
 {
@@ -81,8 +83,11 @@ async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
 {
   const listOfValues = document.createElement("div");
   const imagesValues = document.createElement("img");
+  const infoInCard = document.createElement("div");
+
   const nameAndGeneration = document.createElement("div");
   const characters = document.createElement("div");
+  const abilitiesOfPokemon = document.createElement("div");
 
   const nameOfPokemon = document.createElement("div");
   const generationOfPokemon = document.createElement("div");
@@ -90,6 +95,31 @@ async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
   const experience = document.createElement("div");
   const heightOfPokemon = document.createElement("div");
   const weightOfPokemon = document.createElement("div");
+
+  const abilityOfPokemon = document.createElement("div");
+
+  const firstAndSecondAbilities = document.createElement("div");
+
+  const firstAbility = document.createElement("div");
+  const secondAbility = document.createElement("div");
+
+  const statsInCard = document.createElement("div");
+
+  const hp = document.createElement("div");
+  const attack = document.createElement("div");
+  const deffence = document.createElement("div");
+  const specialAttack = document.createElement("div");
+  const specialDeffence = document.createElement("div");
+  const speed = document.createElement("div");
+
+  statsInCard.textContent = "Stats";
+
+  hp.className = "name";
+  attack.className = "name";
+  deffence.className = "name";
+  specialAttack.className = "name";
+  specialDeffence.className = "name";
+  speed.className = "name";
 
   experience.className = 'name red';
   heightOfPokemon.className = 'name green';
@@ -99,18 +129,20 @@ async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
   heightOfPokemon.textContent = `height: ${pokemon['height']}`;
   weightOfPokemon.textContent = `weight: ${pokemon['weight']}`;
 
-
   nameAndGeneration.className = "block";
   characters.className = "block";
 
   nameOfPokemon.textContent = `${pokemon['name'][0].toUpperCase() + pokemon['name'].slice(1)}`;
   nameOfPokemon.className = `name ${pokemonAdditional['color']}`;
 
+  statsInCard.className = `name ${pokemonAdditional['color']}`;
+
+  firstAndSecondAbilities.className = "block";
+
   generationOfPokemon.textContent = `${pokemonAdditional['generation'].slice(11).toUpperCase()}`
   generationOfPokemon.className = `name generation`;
 
   let abilities = [];
-  let moves = [];
   let stats = [];
 
   for (let i = 0; i < pokemon['abilities'].length; i++)
@@ -118,10 +150,9 @@ async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
     abilities.push(pokemon['abilities'][i]['ability']['name']);
   }
 
-  for (let i = 0; i < pokemon['moves'].length; i++)
-  {
-    moves.push(pokemon['moves'][i]['move']['name']);
-  }
+  abilityOfPokemon.textContent = `Abilities`;
+
+  abilitiesOfPokemon.className = "name " + `${pokemonAdditional['color']}`;
 
   for (let i = 0; i < pokemon['stats'].length; i++)
   {
@@ -132,11 +163,34 @@ async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
     stats.push(statAndBaseStat);
   }
 
-  listOfValues.textContent = `abilities: ${abilities.join(", ")}, moves: ${moves.join(", ")}, stats: ${stats.map(function(item) {return item.join(" ");}).join(", ")}`
+  firstAbility.textContent = abilities[0];
+  secondAbility.textContent = abilities[1];
+
+  firstAbility.className = "name";
+  secondAbility.className = "name";
+
+  hp.textContent = "HP: " + `${stats[0][1]}`;
+  attack.textContent = "Attack: " + `${stats[1][1]}`;
+  deffence.textContent = "Deffence: " + `${stats[2][1]}`;
+  specialAttack.textContent = "Special Attack: " + `${stats[3][1]}`;
+  specialDeffence.textContent = "Special Deffence: " + `${stats[4][1]}`;
+  speed.textContent = "Speed: " + `${stats[5][1]}`;
 
   imagesValues.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon['id']}.png`;
   imagesValues.className = 'imageWithShape';
 
+  firstAndSecondAbilities.appendChild(firstAbility);
+  firstAndSecondAbilities.appendChild(secondAbility);
+
+  abilitiesOfPokemon.appendChild(abilityOfPokemon);
+  abilitiesOfPokemon.appendChild(firstAndSecondAbilities);
+
+  statsInCard.appendChild(hp);
+  statsInCard.appendChild(attack);
+  statsInCard.appendChild(deffence);
+  statsInCard.appendChild(specialAttack);
+  statsInCard.appendChild(specialDeffence);
+  statsInCard.appendChild(speed);
 
   nameAndGeneration.appendChild(nameOfPokemon);
   nameAndGeneration.appendChild(generationOfPokemon);
@@ -145,22 +199,27 @@ async function createInfoInSlider(pokemon, mainElement, pokemonAdditional)
   characters.appendChild(heightOfPokemon);
   characters.appendChild(weightOfPokemon);
 
+  infoInCard.appendChild(characters);
+  infoInCard.appendChild(abilitiesOfPokemon);
+  infoInCard.appendChild(listOfValues);
+  infoInCard.appendChild(statsInCard);
+
   mainElement.appendChild(nameAndGeneration);
   mainElement.appendChild(imagesValues);
-  mainElement.appendChild(characters);
-  mainElement.appendChild(listOfValues);
+  mainElement.appendChild(infoInCard);
 
 }
 
-async function createCards()
+async function createCards(number)
 {
   const pokemons = await getInfoAboutPokemon();
   const container = document.getElementById("b0");
 
-  for (let i = 0; i < pokemons.length; i++)
+  for (let i = 0; i < number; i++)
   {
     const card = document.createElement("div");
     card.className = "card";
+    card.id = `p_${i}`;
     const numberOfPokemon = document.createElement("div");
     numberOfPokemon.className = "circle";
     const nameOfCard = document.createElement("div");
@@ -176,6 +235,25 @@ async function createCards()
 
       cardWithType.className = `type` + " " + `${pokemons[i]['types'][j]}`;
       cardWithType.textContent = `${pokemons[i]['types'][j][0].toUpperCase() + pokemons[i]['types'][j].slice(1)}`;
+      cardWithType.addEventListener("click", function(){
+
+        const informationFromUser = `${pokemons[i]['types'][j]}`;
+
+        for (let j = 0; j < listOfPokemons.length; j++)
+        {
+          if (listOfPokemons[j]['types'][0] == informationFromUser || listOfPokemons[j]['types'][1] == informationFromUser)
+          {
+            const cardTemporary = document.getElementById(`p_${j}`);
+            cardTemporary.style.display = "inline-block";
+          }
+          else
+          {
+            const cardTemporary = document.getElementById(`p_${j}`);
+            cardTemporary.style.display = "none";
+          }
+        }
+        
+      });
 
       typesOfCard.appendChild(cardWithType);
     }
@@ -200,9 +278,7 @@ async function createCards()
       if (infoAboutThePokemon.style.right !== '0%')
       {
         infoAboutThePokemon.style.right = '0%'
-        
-        //divPokemon.textContent = `${pokemons[i]['name'][0].toUpperCase() + pokemons[i]['name'].slice(1).replace(/-/g, " ")}`;
-        //divPokemon.appendChild(createInfoInSlider(pokemons[i]));
+
         createInfoInSlider(listOfAllInfoAboutPokemons[i], divPokemon, pokemons[i]);
       }
     });
@@ -212,4 +288,58 @@ async function createCards()
 }
 
 makeSlider();
-createCards();
+createCards(NUMBER_OF_POKEMONS);
+
+search.addEventListener("click", function(){
+
+  const query = document.getElementById("i0");
+  const informationFromUser = query.value;
+
+  if (informationFromUser == "" || informationFromUser == null)
+  {
+    for (let j = 0; j < listOfPokemons.length; j++)
+    {
+      const card = document.getElementById(`p_${j}`);
+      card.style.display = "inline-block";
+    }
+  }
+  else if (!isNaN(informationFromUser))
+  {
+    for (let j = 0; j < listOfPokemons.length; j++)
+    {
+      if (listOfPokemons[j]['number'] != informationFromUser)
+      {
+        const card = document.getElementById(`p_${j}`);
+        card.style.display = "none";
+      }
+      else
+      {
+        const card = document.getElementById(`p_${j}`);
+        card.style.display = "inline-block";
+      }
+    }
+  }
+  else
+  {
+    for (let j = 0; j < listOfPokemons.length; j++)
+    {
+      const substring = informationFromUser.toLowerCase();
+
+      const text = listOfPokemons[j]['name'];
+      const regex = new RegExp (substring, 'gi');
+      const matches = text.match(regex);
+
+      if (matches === null)
+      {
+        const card = document.getElementById(`p_${j}`);
+        card.style.display = "none";
+      }
+      else
+      {
+        const card = document.getElementById(`p_${j}`);
+        card.style.display = "inline-block";
+      }
+    }
+  }
+  
+});

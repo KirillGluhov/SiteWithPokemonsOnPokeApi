@@ -201,7 +201,7 @@ filter:         drop-shadow(1em 1em 1em black);
 
 .block
 {
-    width: 100%;
+    display: block;
 }
 
 .normal 
